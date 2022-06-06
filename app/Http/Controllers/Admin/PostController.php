@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 use App\Post;
 use App\Category;
+use App\Tag;
 
 class PostController extends Controller
 {
@@ -31,8 +33,8 @@ class PostController extends Controller
     {
         //
         $categories = Category::all();
-
-        return view('admin.posts.create', compact('categories'));
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
@@ -46,14 +48,23 @@ class PostController extends Controller
         //
         $request->validate([
             'title'=>'required|max:250',
-            'content'=>'required',
-            'category_id'=>'required|exists:categories,id'
+            'content'=>'required|min:5',
+            'category_id'=>'required|exists:categories,id',
+            'tags[]'=>'exists:tags,id'
+
+        ], [
+            'title.required' => 'Titolo deve essere valorizzato',
+            'content.required' => ':attribute deve essere compilato',
+            'category_id.exists' => 'La categoria selezionata non esiste',
+            'tag[]' => 'Il tag non esiste',
         ]);
 
         $postData = $request->all();
         $newPost = new Post();
+
         $newPost->fill($postData);
-//slug
+
+        //slug
         $slug=Str::slug($newPost->title);
         $alternativeSlug = $slug;
 
@@ -66,7 +77,16 @@ class PostController extends Controller
         }
         $newPost->slug = $alternativeSlug;
         $newPost->save();
+        //add tag
+        if(array_key_exists('tags', $postData)){
+            $newPost->tags()->sync($postData['tags']);
+        }
+
+        $newPost->save();
         return redirect()->route('admin.posts.index');
+
+
+
     }
 
     /**
@@ -98,8 +118,14 @@ class PostController extends Controller
         //
         $post = Post::findOrFail($id);
         $categories = Category::all();
+        $tags = Tag::all();
 
-        return view('admin.posts.edit', compact('post', 'categories'));
+        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
+
+         //add tag
+         if(array_key_exists('tags', $postData)){
+            $post->tags()->sync($postData['tags']);
+        }
     }
 
     /**
@@ -151,6 +177,7 @@ class PostController extends Controller
     {
         //
         $post = Post::find($id);
+        $post = tags()->sync([]);
         $post->delete();
         return redirect()->route('admin.posts.index');
     }

@@ -16,6 +16,7 @@
                         <th>Titolo</th>
                         <th>Slug</th>
                         <th>Azioni</th>
+                        <th>Tags</th>
                     </tr>
                 </thead>
 
@@ -31,7 +32,11 @@
                                 <a class="btn btn-warning"
                                     href="{{ route('admin.posts.edit', ['post' => $post->id]) }}">EDIT</a>
                             </td>
-
+                            <td>
+                                @foreach ($post->tags as $tag)
+                                    <span>{{ $tag->name }}</span>
+                                @endforeach
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

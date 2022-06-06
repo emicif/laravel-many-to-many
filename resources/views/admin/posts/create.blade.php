@@ -29,8 +29,7 @@
                     </div>
                     <div class="form-group">
                         <label>Contenuto</label>
-                        <textarea name="content" class="form-control" placeholder="Inserisci contenuto"
-                            required>{{ old('content') }}</textarea>
+                        <textarea name="content" class="form-control" placeholder="Inserisci contenuto" required>{{ old('content') }}</textarea>
                     </div>
 
                     {{-- category --}}
@@ -49,6 +48,22 @@
                         @enderror
                     </div>
 
+                    {{-- tags --}}
+                    <div class="form-group">
+                        <div>Tags</div>
+                        @foreach ($tags as $tag)
+                            <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]" />
+                            {{-- {{ $post->tags->contains($tag) ? 'checked' : '' }} /> --}}
+                            {{-- {{ in_array($tag->id, old('tags', $post->tags)) ? 'checked' : '' }} /> --}}
+                            <div class="form-check-label">{{ $tag->name }}</div>
+                        @endforeach
+
+                        @error('tags')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- submit --}}
                     <div class="form-group">
                         <button type="submit" class="btn btn-success">Crea post</button>
                     </div>
