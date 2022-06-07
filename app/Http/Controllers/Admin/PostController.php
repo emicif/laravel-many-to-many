@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 use App\Post;
 use App\Category;
@@ -50,17 +51,30 @@ class PostController extends Controller
             'title'=>'required|max:250',
             'content'=>'required|min:5',
             'category_id'=>'required|exists:categories,id',
-            'tags[]'=>'exists:tags,id'
+            'tags[]'=>'exists:tags,id',
+            'image'=>'nullable|image'
 
         ], [
             'title.required' => 'Titolo deve essere valorizzato',
             'content.required' => ':attribute deve essere compilato',
             'category_id.exists' => 'La categoria selezionata non esiste',
             'tag[]' => 'Il tag non esiste',
+            'image' =>'Il file deve essere un\'immagine'
         ]);
 
         $postData = $request->all();
+
+        //img e faccio il controllo se esiste già
+        if(array_key_exists('image', $postData)){
+            $img_path = Storage::put('uploads', $postData['image']);
+            //1° metodo => aggiungo in Post $fillabe 'cover' => $postData['cover'] = $img_path
+        }
+
+
+
         $newPost = new Post();
+
+        $newPost->cover = $img_path; //salvo l'img 2° metodo
 
         $newPost->fill($postData);
 
@@ -84,8 +98,6 @@ class PostController extends Controller
 
         $newPost->save();
         return redirect()->route('admin.posts.index');
-
-
 
     }
 
@@ -146,6 +158,16 @@ class PostController extends Controller
         ]);
         $post = Post::findOrFail($id);
         $postData = $request->all();
+
+        //img
+        if(array_key_exists('image', $postData)){
+            Storage::delete($post->cover);
+            $img_path = Storage::put('uploads', $postData['image']);
+            //1° metodo => aggiungo in Post $fillabe 'cover' => $postData['cover'] = $img_path
+        }
+
+        $post->cover = $img_path; //salvo l'img 2° metodo
+
         //$post = new Post();
         $post->fill($postData);
     //slug

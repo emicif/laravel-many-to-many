@@ -19,7 +19,8 @@
                         </div>
                     @endif
                 </div>
-                <form autocomplete="off" action="{{ route('admin.posts.store') }}" method="POST">
+                <form autocomplete="off" action="{{ route('admin.posts.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label>Titolo</label>
@@ -47,6 +48,13 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    {{-- img --}}
+                    <div class="form-group">
+                        <label for="image">Immagine Cover</label>
+                        <input type="file" name="image" />
+                    </div>
+
 
                     {{-- tags --}}
                     <div class="form-group">

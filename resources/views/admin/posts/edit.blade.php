@@ -29,6 +29,18 @@
                             required>
 
                     </div>
+
+                    <div class="form-group">
+                        @if ($post->cover)
+                            <div>
+                                <img src="{{ asset('storage/' . $post->cover) }}" alt="">
+                            </div>
+                        @endif
+                        <label for="image">Immagine cover </label>
+                        <input type="file" name="image" />
+                    </div>
+
+
                     <div class="form-group">
                         <label>Contenuto</label>
                         <textarea name="content" class="form-control" required>{{ old('content', $post->content) }}</textarea>
@@ -53,9 +65,13 @@
                     <div class="form-group">
                         <div>Tags</div>
                         @foreach ($tags as $tag)
-                            <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]" />
-                            {{-- {{ $post->tags->contains($tag) ? 'checked' : '' }} /> --}}
-                            {{-- {{ in_array($tag->id, old('tags', $post->tags)) ? 'checked' : '' }} /> --}}
+                            @if ($errors->any())
+                                <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]"
+                                    {{ in_array($tag->id, old('tags', [])) ? 'checked' : '' }} />
+                            @else
+                                <input class="form-check-input" type="checkbox" value="{{ $tag->id }}" name="tags[]"
+                                    {{ $post->tags->contains($tag) ? 'checked' : '' }} />
+                            @endif
                             <div class="form-check-label">{{ $tag->name }}</div>
                         @endforeach
 
@@ -74,5 +90,4 @@
         </div>
 
     </div>
-
 @endsection
