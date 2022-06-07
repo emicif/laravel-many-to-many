@@ -120,12 +120,11 @@ class PostController extends Controller
         $categories = Category::all();
         $tags = Tag::all();
 
+
+
         return view('admin.posts.edit', compact('post', 'categories', 'tags'));
 
-         //add tag
-         if(array_key_exists('tags', $postData)){
-            $post->tags()->sync($postData['tags']);
-        }
+
     }
 
     /**
@@ -162,6 +161,11 @@ class PostController extends Controller
         }
         $post->slug = $alternativeSlug;
     //fine slug
+
+        //add tag
+        if(array_key_exists('tags', $postData)){
+            $post->tags()->sync($postData['tags']);
+        }
 
         $post->update();
         return redirect()->route('admin.posts.index');
