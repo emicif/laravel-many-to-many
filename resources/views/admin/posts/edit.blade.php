@@ -19,7 +19,7 @@
                         </div>
                     @endif
                 </div>
-                <form action="{{ route('admin.posts.update', $post->id) }}" method="POST">
+                <form action="{{ route('admin.posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     {{-- aggiunto metodo --}}
                     @method('PUT')
@@ -30,6 +30,7 @@
 
                     </div>
 
+                    {{-- image --}}
                     <div class="form-group">
                         @if ($post->cover)
                             <div>

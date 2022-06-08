@@ -163,10 +163,10 @@ class PostController extends Controller
         if(array_key_exists('image', $postData)){
             Storage::delete($post->cover);
             $img_path = Storage::put('uploads', $postData['image']);
-            //1° metodo => aggiungo in Post $fillabe 'cover' => $postData['cover'] = $img_path
+            $postData['cover'] = $img_path; //1° metodo => aggiungo in Post $fillabe 'cover' =>
         }
 
-        $post->cover = $img_path; //salvo l'img 2° metodo
+        //$post->cover = $img_path; //salvo l'img 2° metodo
 
         //$post = new Post();
         $post->fill($postData);
@@ -202,8 +202,9 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+
         $post = Post::find($id);
-        $post = tags()->sync([]);
+        $post->tags()->sync([]);
         $post->delete();
         return redirect()->route('admin.posts.index');
     }
